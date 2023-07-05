@@ -1,53 +1,86 @@
-import { Checkbox, FormControlLabel, TextField } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form"
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from "zod"
+import { Box, Grid, Typography, Paper, TextField, FormControl, InputLabel, Button, buttonClasses } from "@mui/material";
+import { BootstrapInput } from "../../component/inputs";
+import useAuth from "../../Hook/useAuth";
+import Swal from "sweetalert2";
+
+type Inputs = {
+  username: string,
+  password: string
+}
 
 export default function Login() {
-  document.title = "Login";
-  const nav = useNavigate()
+  const auth = useAuth()
+  const { register, formState: { errors }, setError, handleSubmit } = useForm<Inputs>({
+    resolver: zodResolver(
+      z.object({
+        username: z.string().nonempty("Tidak boleh kosong"),
+        password: z.string().nonempty("Tidak boleh kosong"),
+      })
+    ),
+    mode: "onBlur",
+  })
+
+  async function login(data: Inputs) {
+    console.log(data);
+    auth.login(data, (err) => {
+      Swal.fire("Error", err, "error")
+    })
+  }
+
   return (
-    <div className="ml-[2.5vw] gap-[7vw] flex mr-[5vw] mt-[3vh]">
-      <div className="w-[50vw] h-[100vh]  bg-[#F8F7FA] rounded-[1rem]"></div>
-      <div className="w-[31vw] h-[100vh] flex items-center">
-        <div className="">
-          <img src="" alt="" className="h-[13vh]" />
-          <h1 className="text-2xl font-semibold">
-            Selamat Datang di Admin Kamus
-          </h1>
-          <p className="text-3xl text-[#85838A] mt-[2vh]">
-            
-          </p>
-          <div className="mt-[6vh]">
-            <TextField
-              fullWidth
-              id="login-text"
-              label="Email"
-              variant="outlined"
-            />
-            <TextField
-              fullWidth
-              sx={{ marginTop: "2.5vh" }}
-              type="password"
-              id="password-text"
-              label="Password"
-              variant="outlined"
-            />
-          </div>
-          <div className="flex justify-between items-center mt-[2vh]">
-            <FormControlLabel
-              control={<Checkbox name="remember" defaultChecked />}
-              label="Remember Me"
-            />
-            <Link to="/" className="text-[blue] flex items-center">
-              Lupa Password?
-            </Link>
-          </div>
-          <button onClick={() => {
-            nav("/")
-          }} className="bg-[blue] w-full rounded-md py-[15px] text-[white] font-bold mt-[2.5vh]">
-            Login
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+    <Grid container >
+      <Grid item xs={7}  >
+        <Box sx={{ height: "99vh", objectFit: "contain" }}>
+          <img src="/login.jpg" width={"100%"} height={"100%"} alt="Login" />
+        </Box>
+      </Grid>
+      <Grid item xs={5}>
+        <Box sx={{ height: "100vh" }} component={"form"} onSubmit={handleSubmit(login)} marginX={"3rem"}>
+          <Grid container direction={"column"} spacing={4}>
+            <Grid item xs={12}>
+              <Typography variant="h4" fontFamily={"'Merriweather', serif"} sx={{
+                marginTop: "5rem",
+              }}>
+                Selamat Datang di Admin Kamus Bahasa Bugis
+              </Typography>
+            </Grid>
+            <Grid item>
+              <FormControl variant="standard" sx={{ width: "100%" }}>
+                <InputLabel shrink htmlFor="username-id" sx={{ fontWeight: "bold" }}>
+                  Username
+                </InputLabel>
+                <BootstrapInput size="small" id="username-id" fullWidth {...register("username")} error={!!errors.username} helperText={errors.username?.message || ""}  />
+               
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl variant="standard" sx={{ width: "100%" }}>
+                <InputLabel shrink htmlFor="password-id" sx={{ fontWeight: "bold" }}>
+                  Password
+                </InputLabel>
+                <BootstrapInput type="password" size="small" id="password-id" fullWidth {...register("password")} error={!!errors.password} helperText={errors.password?.message || ""} />
+                
+              </FormControl>
+            </Grid>
+            <Grid item marginTop={"2rem"}>
+              <Button type="submit" variant="contained" sx={{
+                [`&.${buttonClasses.contained}`] : {
+                  backgroundColor : "#068FFF",
+                  [`&:hover`] : {
+                    backgroundColor : "#4E4FEB"
+                  },
+                  fontFamily : "'Poppins', sans-serif"
+                }
+              }} fullWidth >
+                Login
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Grid>
+    </Grid>
+  )
 }
