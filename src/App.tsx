@@ -18,13 +18,15 @@ const rout = createBrowserRouter([
       {
         index : true,
         element : <Dashboard/>
+      },
+      
+      {
+        path : "/login",
+        element : <Login/>
       }
     ]
   },
-  {
-    path : "/login",
-    element : <Login/>
-  }
+  
 ])
 export default function App() {
   return (
