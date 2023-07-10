@@ -14,14 +14,16 @@ type ContextType = {
     user?: null | User
     isLoading: boolean
     login: ({ username, password }: { username: string, password: string }, cbErr: (err: string) => void) => void,
-    logout: () => void
+    logout: () => void,
+    setLoading : any
 }
 
 export const AuthContext = createContext<ContextType>({
     user: null,
     isLoading: true,
     login: ({ username, password }: { username: string, password: string }, cbErr) => { },
-    logout: () => { }
+    logout: () => { },
+    setLoading : null
 });
 
 const userTemp = {
@@ -89,11 +91,23 @@ export default function Auth({ children }: { children: React.ReactNode }) {
 
     }, [])
 
+    useEffect(() => {
+         // Loading function to load data or
+        // fake it using setTimeout;
+        const timeout = setTimeout(() => {
+            setLoading(false)
+        }, 2000)
+        return () => {
+            clearTimeout(timeout)
+        }
+    }, [isLoading])
+
     const defaultValue = {
         user,
         isLoading,
         login,
-        logout
+        logout,
+        setLoading
     }
 
     return (

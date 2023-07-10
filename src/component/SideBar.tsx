@@ -2,6 +2,10 @@ import { Paper, Grid, Box, Typography, ListItemButton, ListItemText, ListItemIco
 import { useLocation, useNavigate } from "react-router-dom"
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AbcIcon from '@mui/icons-material/Abc';
+import useNavigate2 from "../Hook/useNavigate2";
+import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle';
+
+
 const ListSideItem = [
     {
         title: "Dashboard",
@@ -13,10 +17,15 @@ const ListSideItem = [
         rout: "/words",
         Icon : AbcIcon
     },
+    {
+        title : "Users",
+        rout : "/user",
+        Icon : SupervisedUserCircleIcon
+    }
 ]
 
 export default function SideBar() {
-    const nav = useNavigate()
+    const nav = useNavigate2()
     const loc = useLocation()
     return (
         <Paper sx={{ position: "fixed", top: 0, left: 0, height: "100vh", width: "40vh", overflowY: "center" }}>

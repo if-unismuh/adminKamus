@@ -5,7 +5,6 @@ import {
 import { useState } from "react"
 import { CustomActionButton } from "../../component/buttons"
 import { Input } from "@mui/icons-material"
-import AddWord from "./addWord"
 import { gql, useQuery } from "@apollo/client"
 
 const RowCell = styled(TableCell)({
@@ -15,21 +14,18 @@ const RowCell = styled(TableCell)({
 })
 
 
-
-export default function Words() {
+export default function Users() {
     const [page, setPage] = useState(0)
     const [rows, setRows] = useState(10)
     const { data, error, loading } = useQuery(gql`
     {
-        words {
-          _id
-          lexem
-          definition
-          example
-          sense_number
-          phonetic_form
-          example_gloss
-        }
+        users {
+            _id,
+            email,
+            password,
+            namaLengkap,
+            role
+          }
       }
 
 `)
@@ -55,9 +51,7 @@ export default function Words() {
         <>
             <TableContainer component={Paper} sx={{ width: "97%" }}>
                 <Grid container direction={"row-reverse"} spacing={2} alignItems={"center"} paddingRight={"1rem"} marginY="1rem" >
-                    <Grid item>
-                        <AddWord />
-                    </Grid>
+
                     <Grid item>
                         <TextField hiddenLabel placeholder="search" size="small" variant="outlined" />
                     </Grid>
@@ -72,40 +66,38 @@ export default function Words() {
                                 No
                             </RowCell>
                             <RowCell>
-                                Kata
+                                Email
                             </RowCell>
                             <RowCell>
-                                Arti
+                                Password
                             </RowCell>
                             <RowCell>
-                                Pelafalan
+                                Nama Lengkap
                             </RowCell>
                             <RowCell>
-                                Contoh
+                                Role
                             </RowCell>
-
                         </TableRow>
                     </TableHead>
                     <TableBody>
 
                         {
-                            data.words.map((el: any, ind: number) => (
+                            data.users.map((el: any, ind: number) => (
                                 <TableRow>
                                     <TableCell>
                                         {ind + 1}
                                     </TableCell>
                                     <TableCell>
-                                        {el.lexem}
+                                        {el.email}
                                     </TableCell>
                                     <TableCell>
-                                        {el.definition}
+                                        {el.password}
                                     </TableCell>
                                     <TableCell>
-                                        {el.phonetic_form}
+                                        {el.namaLengkap}
                                     </TableCell>
-
                                     <TableCell>
-                                        {el.example} : {el.example_gloss}
+                                        {el.role}
                                     </TableCell>
                                 </TableRow>
                             ))
