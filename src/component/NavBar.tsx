@@ -13,7 +13,7 @@ export default function NavBar() {
 
 
     return (
-        <Box sx={{ height: "14vh", width: "100%", marginY: "2rem", marginLeft: "45vh", position: "fixed", top: 0, left: 0 }}>
+        <Box sx={{ height: "14vh", width: "100%", marginY: "2rem", marginLeft: "45vh", position: "fixed", top: 0, left: 0, zIndex :"1000" }}>
             <Paper sx={{ width: "75%", height: "70%" }}>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>

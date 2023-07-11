@@ -15,6 +15,11 @@ const RowCell = styled(TableCell)({
 })
 
 
+const KelasKata: { [key: string]: string } = {
+    "n": "Benda",
+    "v": "Kerja"
+}
+
 
 export default function Words() {
     const [page, setPage] = useState(0)
@@ -26,9 +31,12 @@ export default function Words() {
           lexem
           definition
           example
-          sense_number
+          homonym_number
           phonetic_form
           example_gloss
+          part_of_speech
+          sense_number
+          sub_entry
         }
       }
 
@@ -63,55 +71,82 @@ export default function Words() {
                     </Grid>
                 </Grid>
                 <Divider />
-                <Table>
-                    <TableHead sx={{
-                        backgroundColor: '#e0e0e0'
-                    }}>
-                        <TableRow>
-                            <RowCell>
-                                No
-                            </RowCell>
-                            <RowCell>
-                                Kata
-                            </RowCell>
-                            <RowCell>
-                                Arti
-                            </RowCell>
-                            <RowCell>
-                                Pelafalan
-                            </RowCell>
-                            <RowCell>
-                                Contoh
-                            </RowCell>
+                <div style={{overflowX:"auto"}}>
 
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
+                    <Table sx={{ overflowX: "auto" }}>
+                        <TableHead sx={{
+                            backgroundColor: '#e0e0e0'
+                        }}>
+                            <TableRow>
+                                <RowCell>
+                                    No
+                                </RowCell>
+                                <RowCell>
+                                    Kata
+                                </RowCell>
+                                <RowCell>
+                                    Definisi
+                                </RowCell>
+                                <RowCell>
+                                    Pelafalan
+                                </RowCell>
+                                <RowCell>
+                                    Contoh
+                                </RowCell>
+                                <RowCell>
+                                    Sub Lema
+                                </RowCell>
+                                <RowCell>
+                                    Nomor Homonim
+                                </RowCell>
+                                <RowCell>
+                                    Nomor Polisemi
+                                </RowCell>
+                                <RowCell>
+                                    Kelas Kata
+                                </RowCell>
 
-                        {
-                            data.words.map((el: any, ind: number) => (
-                                <TableRow>
-                                    <TableCell>
-                                        {ind + 1}
-                                    </TableCell>
-                                    <TableCell>
-                                        {el.lexem}
-                                    </TableCell>
-                                    <TableCell>
-                                        {el.definition}
-                                    </TableCell>
-                                    <TableCell>
-                                        {el.phonetic_form}
-                                    </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
 
-                                    <TableCell>
-                                        {el.example} : {el.example_gloss}
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        }
-                    </TableBody>
-                </Table>
+                            {
+                                data.words.map((el: any, ind: number) => (
+                                    <TableRow>
+                                        <TableCell>
+                                            {ind + 1}
+                                        </TableCell>
+                                        <TableCell>
+                                            {el.lexem}
+                                        </TableCell>
+                                        <TableCell>
+                                            {el.definition.join(',')}
+                                        </TableCell>
+                                        <TableCell>
+                                            {el.phonetic_form}
+                                        </TableCell>
+                                        <TableCell>
+                                            {el.example.map((el2: string, ind: string) => el2 + " : " + el.example_gloss[ind]) + (ind < (el.example.length - 1) ? "," : "")}
+                                        </TableCell>
+                                        <TableCell>
+                                            {el.sub_entry}
+                                        </TableCell>
+                                        <TableCell>
+                                            {el.homonym_number}
+                                        </TableCell>
+                                        <TableCell>
+                                            {el.sense_number}
+                                        </TableCell>
+                                        <TableCell>
+                                            {KelasKata[el.part_of_speech]}
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            }
+                        </TableBody>
+                    </Table>
+                </div>
+
                 <TablePagination
                     component="div"
                     count={100}
