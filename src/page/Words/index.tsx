@@ -20,13 +20,15 @@ const RowCell = styled(TableCell)({
 type InputType = {
     data : any,
     open : boolean,
-    setOpen : any
+    setOpen : any,
+    setInputData : any
 }
 
 const InputProvider = createContext<InputType>({
     data : null,
     open : false,
-    setOpen : () => {}
+    setOpen : () => {},
+    setInputData : () => {}
 })
 
 export const useWord = () => useContext(InputProvider)
@@ -110,7 +112,7 @@ export default function Words() {
         </Grid>
     </Box>
     return (
-        <InputProvider.Provider value={{data :  inputData, open : open, setOpen }}>
+        <InputProvider.Provider value={{data :  inputData, open : open, setOpen, setInputData }}>
             <TableContainer component={Paper} sx={{ width: "97%" }}>
                 <Grid container direction={"row-reverse"} spacing={2} alignItems={"center"} paddingRight={"1rem"} marginY="1rem" >
                     <Grid item>

@@ -53,7 +53,7 @@ type keysType = "lexem" |
 
 
 export default function AddWord({ refetch }: { refetch: any }) {
-    const {open, setOpen, data : inputData} = useWord()
+    const {open, setOpen, data : inputData, setInputData} = useWord()
     const [isLoading, setIsLoading] = useState(false);
     const { register, setValue,formState: { errors }, handleSubmit, reset, setError } = useForm<Inputs>({
         mode: "onBlur",
@@ -70,7 +70,10 @@ export default function AddWord({ refetch }: { refetch: any }) {
             related_words_id: z.string().nonempty("Tidak boleh kossong"),
         })),
         values : {
-            ...inputData
+            ...inputData,
+            definition : inputData?.definition.join(","),
+            example : inputData?.example.join(","),
+            example_gloss : inputData?.example_gloss.join(",")
         }
     })
 
@@ -94,15 +97,40 @@ export default function AddWord({ refetch }: { refetch: any }) {
         
               
     `)
+    const [editWord] = useMutation(gql`
+    mutation UpdateWord($id: String!, $input: UpdateWordInput!) {
+        updateWord(id: $id, updateWordInput: $input) {
+          lexem
+          definition
+          example
+          example_gloss
+          sense_number
+          homonym_number
+          sub_entry
+          phonetic_form
+          part_of_speech
+          related_words_id
+        }
+      }
+             
+    `)
+
+
 
     async function CreateData(data: Inputs) {
         try {
-            console.log("Oke")
-            console.log(data)
             setIsLoading(true)
-            const result = await addWord({ variables: { input: data } })
+            if(inputData != null) {
+                await editWord({variables : {id : inputData._id, input : data}})
+            } else {
+                await addWord({ variables: { input: data } })
+            }
             refetch();
-
+            reset()
+            if(inputData != null) {
+                setInputData(null)
+                setOpen(false)
+            }
         } catch (err) {
             setError("lexem", { message: "Error" })
         } finally {
@@ -122,6 +150,7 @@ export default function AddWord({ refetch }: { refetch: any }) {
                     if (isLoading) return
                     setOpen(false)
                     reset()
+                    setInputData(null)
                 }}
                 anchor="right"
             >
@@ -181,7 +210,9 @@ export default function AddWord({ refetch }: { refetch: any }) {
                         {
                             !isLoading ? <Grid item>
                                 <CustomActionButton fullWidth variant="contained" type="submit" >
-                                    Tambah
+                                    {
+                                        inputData == null ? "Tambah" : "Edit"
+                                    }
                                 </CustomActionButton>
                             </Grid> :
                                 <Grid item justifySelf={"center"} alignSelf={"center"}>
