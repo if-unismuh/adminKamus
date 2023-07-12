@@ -1,12 +1,14 @@
 import {
     Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Divider
-    , Grid, Button, TextField, styled, tableCellClasses, Box, Typography
+    , Grid, Button, TextField, styled, tableCellClasses, Box, Typography, ButtonGroup
 } from "@mui/material"
-import { useState } from "react"
-import { CustomActionButton } from "../../component/buttons"
+import { createContext, useContext, useMemo, useState } from "react"
+import { CustomActionButton, SmallColoredButton } from "../../component/buttons"
 import { Input } from "@mui/icons-material"
 import AddWord from "./addWord"
-import { gql, useQuery } from "@apollo/client"
+import { gql, useMutation, useQuery } from "@apollo/client"
+import Swal from "sweetalert2"
+import { Loading, Question } from "../../util/swal"
 
 const RowCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -14,6 +16,20 @@ const RowCell = styled(TableCell)({
     }
 })
 
+
+type InputType = {
+    data : any,
+    open : boolean,
+    setOpen : any
+}
+
+const InputProvider = createContext<InputType>({
+    data : null,
+    open : false,
+    setOpen : () => {}
+})
+
+export const useWord = () => useContext(InputProvider)
 
 const KelasKata: { [key: string]: string } = {
     "n": "Benda",
@@ -24,7 +40,7 @@ const KelasKata: { [key: string]: string } = {
 export default function Words() {
     const [page, setPage] = useState(0)
     const [rows, setRows] = useState(10)
-    const { data, error, loading } = useQuery(gql`
+    const { data, error, loading, refetch } = useQuery(gql`
     {
         words {
           _id
@@ -37,10 +53,44 @@ export default function Words() {
           part_of_speech
           sense_number
           sub_entry
+          related_words_id
+
         }
       }
 
 `)
+      const dataShow = useMemo(() => {
+        if(data?.words == null) return []
+        if(data?.words.length == 0) return []
+        return data.words.slice(page * rows, page * rows + rows)
+      }, [data, page, rows])
+    const [deleteWord] = useMutation(gql`
+        mutation RemoveWord($id: String!) {
+        removeWord(id: $id) {
+          _id
+        }
+      }
+    `)
+    const [inputData, setInputData] = useState(null)
+    const [open, setOpen] = useState(false)
+    async function removeWord(id : string) {
+        try {
+            const {isConfirmed} = await Question.fire({
+                text : "Apakah anda ingin menghapus kata ini?"
+            })
+
+            if(!isConfirmed) return
+            Loading.fire()
+            await deleteWord({variables : {
+                id
+            }})
+            Swal.fire("Berhasil" , "", "success")
+            refetch()
+        }catch(err) {
+            console.error(err)
+            Swal.fire("Gagal" , "", "error")
+        }
+    }
     if (loading) return <></>
     if (error) return <Box >
         <Grid container minHeight={"50vh"} justifyContent={"center"} alignItems={"center"} direction={"column"}>
@@ -60,11 +110,11 @@ export default function Words() {
         </Grid>
     </Box>
     return (
-        <>
+        <InputProvider.Provider value={{data :  inputData, open : open, setOpen }}>
             <TableContainer component={Paper} sx={{ width: "97%" }}>
                 <Grid container direction={"row-reverse"} spacing={2} alignItems={"center"} paddingRight={"1rem"} marginY="1rem" >
                     <Grid item>
-                        <AddWord />
+                        <AddWord refetch={refetch}/>
                     </Grid>
                     <Grid item>
                         <TextField hiddenLabel placeholder="search" size="small" variant="outlined" />
@@ -105,16 +155,19 @@ export default function Words() {
                                 <RowCell>
                                     Kelas Kata
                                 </RowCell>
+                                <RowCell>
+                                    Aksi
+                                </RowCell>
 
                             </TableRow>
                         </TableHead>
                         <TableBody>
 
                             {
-                                data.words.map((el: any, ind: number) => (
+                                dataShow.map((el: any, ind: number) => (
                                     <TableRow>
                                         <TableCell>
-                                            {ind + 1}
+                                            {(page * rows)+(ind + 1)}
                                         </TableCell>
                                         <TableCell>
                                             {el.lexem}
@@ -140,6 +193,22 @@ export default function Words() {
                                         <TableCell>
                                             {KelasKata[el.part_of_speech]}
                                         </TableCell>
+                                        <TableCell>
+                                            <ButtonGroup>
+                                                <SmallColoredButton onClick={() => {
+                                                    removeWord(el._id)
+                                                }} color="red"  >
+                                                    Delete
+                                                </SmallColoredButton>
+                                                <SmallColoredButton color="blue" onClick={() => {
+                                                    setOpen(true)
+                                                    setInputData(el)
+                                                    console.log(el)
+                                                }}>
+                                                    Edit
+                                                </SmallColoredButton>
+                                            </ButtonGroup>
+                                        </TableCell>
                                     </TableRow>
                                 ))
                             }
@@ -149,7 +218,7 @@ export default function Words() {
 
                 <TablePagination
                     component="div"
-                    count={100}
+                    count={data.words.length}
                     page={page}
                     onPageChange={(ev, newpage) => {
                         setPage(newpage)
@@ -161,6 +230,6 @@ export default function Words() {
                     }}
                 />
             </TableContainer>
-        </>
+        </InputProvider.Provider>
     )
 }
