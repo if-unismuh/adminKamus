@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { MenuItem, Select, menuItemClasses, selectClasses } from "@mui/material";
 
 export const StyledSelect = styled(Select)({
-    
+        
         [`$.${selectClasses.select}`] : {
             color : "green"
         }
@@ -17,12 +17,12 @@ export const StyledMenu = styled(MenuItem)({
     "&:hover" : {
         backgroundColor : "#f4f3fe",
         color : "#4942E4",
-        borderRadius : ".5rem",
+        borderRadius : "8px",
     },
     [`&.${menuItemClasses.selected}`] : {
         backgroundColor : "#4942E4",
         color : "whitesmoke",
-        borderRadius : ".5rem",
+        borderRadius : "8px",
         "&:hover" : {
             backgroundColor : "#4942E4",
         }

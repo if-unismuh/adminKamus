@@ -75,10 +75,10 @@ export default function Words() {
     const dataShow = useMemo(() => {
         if (data?.words == null) return []
         if (data?.words.length == 0) return []
-        return data.words.slice(page * rows, page * rows + rows).filter((el: any) => {
+        return data.words.filter((el: any) => {
             if(filter.kelasKata != "all" && filter.kelasKata != el.part_of_speech) return false;
             return true
-        })
+        }).slice(page * rows, page * rows + rows)
     }, [data, page, rows, filter])
     const dataLength = useMemo(() => {
         if(data == null) return 0
@@ -152,6 +152,11 @@ export default function Words() {
                             '& .MuiSelect-select': {
                               color: 'grey', // Set your desired color here
                             },
+                            '&.MuiOutlinedInput-root': { 
+                                '&:hover .MuiOutlinedInput-notchedOutline': 
+                                { borderColor: '#4942E4' }, 
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': 
+                                { borderColor: '#4942E4' } }
                           }}
                         onChange={(ev) => setFilter(el => ({...el, kelasKata : ev.target.value as Filter["kelasKata"]}) )}
 
