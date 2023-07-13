@@ -15,6 +15,7 @@ const RowCell = styled(TableCell)({
 
 
 export default function Users() {
+    document.title = "Users"
     const [page, setPage] = useState(0)
     const [rows, setRows] = useState(10)
     const { data, error, loading } = useQuery(gql`
