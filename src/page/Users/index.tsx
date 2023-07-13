@@ -2,10 +2,14 @@ import {
     Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Divider
     , Grid, Button, TextField, styled, tableCellClasses, Box, Typography
 } from "@mui/material"
-import { useState } from "react"
+import { SetStateAction, createContext, useContext, useMemo, useState } from "react"
 import { CustomActionButton } from "../../component/buttons"
 import { Input } from "@mui/icons-material"
-import { gql, useQuery } from "@apollo/client"
+import { gql, useMutation, useQuery } from "@apollo/client"
+import AddUser from "./addUser"
+import ActionButton from "../../component/actionButton"
+import { Loading, Question } from "../../util/swal"
+import Swal from "sweetalert2"
 
 const RowCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -13,12 +17,29 @@ const RowCell = styled(TableCell)({
     }
 })
 
+type ContextType = {
+    inputData: any,
+    setInputData: any,
+    open: boolean,
+    setOpen: any
+}
+
+const UserContext = createContext<ContextType>({
+    inputData: null,
+    setInputData: () => { },
+    setOpen: null,
+    open: false
+})
+
+export const useUser = () => useContext(UserContext)
 
 export default function Users() {
     document.title = "Users"
     const [page, setPage] = useState(0)
     const [rows, setRows] = useState(10)
-    const { data, error, loading } = useQuery(gql`
+    const [open, setOpen] = useState(false)
+    const [inputData, setInputData] = useState(null)
+    const { data, error, loading, refetch } = useQuery(gql`
     {
         users {
             _id,
@@ -30,6 +51,47 @@ export default function Users() {
       }
 
 `)
+
+    const [deleteUser] = useMutation(gql`
+    mutation RemoveUser($id: String!) {
+        removeUser(id: $id) {
+          _id
+        }
+    }
+    `)
+
+    async function removeWord(id: string) {
+        try {
+            const { isConfirmed } = await Question.fire({
+                text: "Apakah anda ingin menghapus user ini?"
+            })
+
+            if (!isConfirmed) return
+            Loading.fire()
+            await deleteUser({
+                variables: {
+                    id
+                }
+            })
+            Swal.fire("Berhasil", "", "success")
+            refetch()
+        } catch (err) {
+            console.error(err)
+            Swal.fire("Gagal", "", "error")
+        }
+    }
+    const dataShow = useMemo(() => {
+        if (data?.users == null) return []
+        if (data?.users.length == 0) return []
+        return data.users.slice(page * rows, page * rows + rows)
+    }, [data, page, rows])
+
+    const dataLength = useMemo(() => {
+        if (data == null) return 0
+        return data?.users.length
+    }, [data, page, rows])
+
+
     if (loading) return <></>
     if (error) return <Box >
         <Grid container minHeight={"50vh"} justifyContent={"center"} alignItems={"center"} direction={"column"}>
@@ -49,10 +111,17 @@ export default function Users() {
         </Grid>
     </Box>
     return (
-        <>
+        <UserContext.Provider value={{
+            open,
+            setOpen,
+            inputData,
+            setInputData
+        }}>
             <TableContainer component={Paper} sx={{ width: "97%" }}>
                 <Grid container direction={"row-reverse"} spacing={2} alignItems={"center"} paddingRight={"1rem"} marginY="1rem" >
-
+                    <Grid item>
+                        <AddUser refetch={refetch} />
+                    </Grid>
                     <Grid item>
                         <TextField hiddenLabel placeholder="search" size="small" variant="outlined" />
                     </Grid>
@@ -78,12 +147,15 @@ export default function Users() {
                             <RowCell>
                                 Role
                             </RowCell>
+                            <RowCell>
+                                Aksi
+                            </RowCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
 
                         {
-                            data.users.map((el: any, ind: number) => (
+                            dataShow.map((el: any, ind: number) => (
                                 <TableRow>
                                     <TableCell>
                                         {ind + 1}
@@ -100,6 +172,14 @@ export default function Users() {
                                     <TableCell>
                                         {el.role}
                                     </TableCell>
+                                    <TableCell>
+                                        <ActionButton hapus={() => {
+                                            removeWord(el._id)
+                                        }} edit={() => {
+                                            setOpen(true)
+                                            setInputData(el)
+                                        }} />
+                                    </TableCell>
                                 </TableRow>
                             ))
                         }
@@ -107,7 +187,7 @@ export default function Users() {
                 </Table>
                 <TablePagination
                     component="div"
-                    count={100}
+                    count={dataLength}
                     page={page}
                     onPageChange={(ev, newpage) => {
                         setPage(newpage)
@@ -119,6 +199,6 @@ export default function Users() {
                     }}
                 />
             </TableContainer>
-        </>
+        </UserContext.Provider>
     )
 }

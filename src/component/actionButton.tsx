@@ -1,7 +1,7 @@
 import { Divider, Grid, IconButton, ListItem, ListItemText, Menu } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from "react";
-import { StyledMenu } from "../../component/select";
+import { StyledMenu } from "./select";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 

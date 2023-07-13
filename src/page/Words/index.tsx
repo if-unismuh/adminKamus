@@ -10,7 +10,7 @@ import { gql, useMutation, useQuery } from "@apollo/client"
 import Swal from "sweetalert2"
 import { Loading, Question } from "../../util/swal"
 import { StyledMenu, StyledSelect } from "../../component/select"
-import ActionButton from "./actionButton"
+import ActionButton from "../../component/actionButton"
 
 const RowCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
