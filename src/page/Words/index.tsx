@@ -158,7 +158,12 @@ export default function Words() {
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': 
                                 { borderColor: '#4942E4' } }
                           }}
-                        onChange={(ev) => setFilter(el => ({...el, kelasKata : ev.target.value as Filter["kelasKata"]}) )}
+                        onChange={(ev) => {
+                            setFilter(el => ({...el, kelasKata : ev.target.value as Filter["kelasKata"]}) )
+                            setRows(10)
+                            setPage(0)
+                        }
+                        }
 
                     >
                         <StyledMenu value={"all"}>Pilih Kelas Kata</StyledMenu>
