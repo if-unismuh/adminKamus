@@ -102,8 +102,8 @@ export default function AddUser({ refetch }: { refetch: any }) {
                 open={open}
                 onClose={() => {
                     if (isLoading) return
-                    setOpen(false)
                     reset()
+                    setOpen(false)
                     setInputData(null)
                 }}
                 anchor="right"
