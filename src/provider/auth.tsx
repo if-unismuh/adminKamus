@@ -37,6 +37,8 @@ export default function Auth({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const nav = useNavigate()
     const loc = useLocation()
+
+
     async function login({ username, password }: { username: string, password: string }, cbErr: (err: string) => void) {
         try {
             if (!(username == userTemp.username && password == userTemp.password)) {
@@ -56,6 +58,8 @@ export default function Auth({ children }: { children: React.ReactNode }) {
             cbErr("Server Error")
         }
     }
+
+    
     async function logout() {
         try {
             window.localStorage.removeItem("user")

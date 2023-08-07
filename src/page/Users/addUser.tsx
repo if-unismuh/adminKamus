@@ -45,15 +45,13 @@ export default function AddUser({ refetch }: { refetch: any }) {
         })),
         values : {
             ...inputData,
-            definition : inputData?.definition.join(","),
-            example : inputData?.example.join(","),
-            example_gloss : inputData?.example_gloss.join(",")
+           
         }
     })
 
 
 
-    const [addWord, { data, error }] = useMutation(gql`
+    const [addUser, { data, error }] = useMutation(gql`
     mutation CreateUser($input: CreateUserInput!) {
         createUser(createUserInput: $input) {
           _id
@@ -62,7 +60,7 @@ export default function AddUser({ refetch }: { refetch: any }) {
         
               
     `)
-    const [editWord] = useMutation(gql`
+    const [editUser] = useMutation(gql`
     mutation UpdateWord($id: String!, $input: UpdateWordInput!) {
         updateWord(id: $id, updateWordInput: $input) {
             _id
@@ -77,9 +75,9 @@ export default function AddUser({ refetch }: { refetch: any }) {
         try {
             setIsLoading(true)
             if(inputData != null) {
-                await editWord({variables : {id : inputData._id, input : data}})
+                await editUser({variables : {id : inputData._id, input : data}})
             } else {
-                await addWord({ variables: { input: data } })
+                await addUser({ variables: { input: data } })
             }
             refetch();
             reset()
@@ -117,7 +115,7 @@ export default function AddUser({ refetch }: { refetch: any }) {
                     <Grid container direction={"column"} spacing={3} >
                         <Grid item>
                             <Typography variant="h5" fontFamily={"'Poppins', sans-serif"}>
-                                Input Kata
+                                Input User
                             </Typography>
                         </Grid>
 

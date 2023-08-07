@@ -49,6 +49,7 @@ export default function SideBar() {
                                         backgroundColor: selected ? "#4942E4" : "#f4f5f5",
                                     }
                                 }} onClick={() => {
+                                    if(selected) return
                                     nav(el.rout)
                                 }}>
                                     <ListItemIcon  >

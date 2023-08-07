@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import { Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
+import { Card, CardContent, CardMedia, Grid, Skeleton, Typography } from "@mui/material";
 import { LuWholeWord } from "react-icons/lu"
 export default function WordCount() {
     const { data, error, loading } = useQuery(gql`
@@ -11,6 +11,8 @@ export default function WordCount() {
       }
 
 `)
+      if(loading) return <Skeleton sx={{width:"100%", height:"100%"}} />
+
     return (
         <>
             <Card >

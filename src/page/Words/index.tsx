@@ -53,9 +53,10 @@ export default function Words() {
     const [filter, setFilter] = useState<Filter>({
         kelasKata: "all"
     })
+    const [search, setSearch] = useState<string>("")
     const { data, error, loading, refetch } = useQuery(gql`
-    {
-        words {
+    query SearchQuery($query: String!) {
+        search(query: $query) {
           _id
           lexem
           definition
@@ -71,18 +72,24 @@ export default function Words() {
         }
       }
 
-`)
+`, {
+    variables : {
+        query : search
+    }
+})
     const dataShow = useMemo(() => {
-        if (data?.words == null) return []
-        if (data?.words.length == 0) return []
-        return data.words.filter((el: any) => {
+            
+        if (data?.search == null) return []
+        if (data?.search.length == 0) return []
+        return data.search.filter((el: any) => {
             if(filter.kelasKata != "all" && filter.kelasKata != el.part_of_speech) return false;
             return true
         }).slice(page * rows, page * rows + rows)
     }, [data, page, rows, filter])
     const dataLength = useMemo(() => {
         if(data == null) return 0
-       return data?.words.filter((el : any) => {
+        console.log(data)
+       return data?.search?.filter((el : any) => {
          if(filter.kelasKata != "all" && filter.kelasKata != el.part_of_speech) return false;
         return true
        }).length
@@ -117,7 +124,6 @@ export default function Words() {
         }
     }
     
-    if (loading) return <></>
     if (error) return <Box >
         <Grid container minHeight={"50vh"} justifyContent={"center"} alignItems={"center"} direction={"column"}>
             <Grid item>
@@ -179,11 +185,14 @@ export default function Words() {
                         <AddWord refetch={refetch} />
                     </Grid>
                     <Grid item>
-                        <TextField hiddenLabel placeholder="search" size="small" variant="outlined" />
+                        <TextField hiddenLabel value={search} onChange={(ev) => {
+                            setSearch(ev.target.value);
+                        }} placeholder="search" size="small" variant="outlined" />
                     </Grid>
                 </Grid>
                 <Divider />
-                <div style={{ overflowX: "auto" }}>
+                {
+                    !loading && <div style={{ overflowX: "auto" }}>
 
                     <Table sx={{ overflowX: "auto" }}>
                         <TableHead sx={{
@@ -268,6 +277,8 @@ export default function Words() {
                         </TableBody>
                     </Table>
                 </div>
+                }
+                
 
                 <TablePagination
                     component="div"

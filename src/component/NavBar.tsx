@@ -1,8 +1,11 @@
-import { Box, Paper, Grid, Avatar, Menu, MenuItem, Button, ListItem, ListItemText, Divider, Badge } from "@mui/material"
+import { Box, Paper, Grid, Avatar, Menu, MenuItem, Button, ListItem, ListItemText, Divider, Badge, Typography } from "@mui/material"
 import { deepOrange } from "@mui/material/colors"
 import { useState } from "react"
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import useAuth from "../Hook/useAuth";
+import { StyledMenu } from "./select";
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
 export default function NavBar() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -13,7 +16,7 @@ export default function NavBar() {
 
 
     return (
-        <Box sx={{ height: "14vh", width: "100%", marginY: "2rem", marginLeft: "45vh", position: "fixed", top: 0, left: 0, zIndex :"1000" }}>
+        <Box sx={{ height: "14vh", width: "100%", marginY: "2rem", marginLeft: "45vh", position: "fixed", top: 0, left: 0, zIndex: "1000" }}>
             <Paper sx={{ width: "75%", height: "70%" }}>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
@@ -39,7 +42,7 @@ export default function NavBar() {
                             </Grid>
                             <Grid item>
                                 <Badge badgeContent={4} color="primary" sx={{
-                                    "&:hover" : {
+                                    "&:hover": {
                                         cursor: "pointer"
                                     }
                                 }}>
@@ -63,12 +66,33 @@ export default function NavBar() {
                     </ListItemText>
                 </ListItem>
                 <Divider />
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={() => {
+                <StyledMenu onClick={handleClose}>
+                    <Grid container spacing={2}>
+                        <Grid item>
+                            <PersonIcon />
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body1">
+                                Profile
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </StyledMenu>
+                <StyledMenu onClick={() => {
                     setAnchorEl(null);
                     auth.logout()
-                }}>Logout</MenuItem>
+                }}>
+                    <Grid container spacing={2} >
+                        <Grid item>
+                            <LogoutIcon />
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body1">
+                            Logout
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </StyledMenu>
             </Menu>
         </Box>
     )

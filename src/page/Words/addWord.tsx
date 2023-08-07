@@ -178,7 +178,7 @@ export default function AddWord({ refetch }: { refetch: any }) {
                                                         <Select
                                                             labelId="demo-simple-select-label"
                                                             id="demo-simple-select"
-                                                            label="Age"
+                                                            label={el}
                                                             defaultValue={inputData?.[keys[ind]] as keysType}
                                                             {...register(keys[ind] as keysType)}
                                                         >
