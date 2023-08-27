@@ -11,6 +11,8 @@ import Swal from "sweetalert2"
 import { Loading, Question } from "../../util/swal"
 import { StyledMenu, StyledSelect } from "../../component/select"
 import ActionButton from "../../component/actionButton"
+import { IWords } from "../../types/words"
+import AddWordItem from "./addWordItem"
 
 const RowCell = styled(TableCell)({
     [`&.${tableCellClasses.head}`]: {
@@ -53,6 +55,9 @@ export default function Words() {
     const [filter, setFilter] = useState<Filter>({
         kelasKata: "all"
     })
+
+    const [isAdding, setIsAdding] = useState(false)
+    const [tempAddingItems, setTempAdding] = useState<IWords[]>([])
     const [search, setSearch] = useState<string>("")
     const { data, error, loading, refetch } = useQuery(gql`
     query SearchQuery($query: String!) {
@@ -73,26 +78,26 @@ export default function Words() {
       }
 
 `, {
-    variables : {
-        query : search
-    }
-})
+        variables: {
+            query: search
+        }
+    })
     const dataShow = useMemo(() => {
-            
+
         if (data?.search == null) return []
         if (data?.search.length == 0) return []
         return data.search.filter((el: any) => {
-            if(filter.kelasKata != "all" && filter.kelasKata != el.part_of_speech) return false;
+            if (filter.kelasKata != "all" && filter.kelasKata != el.part_of_speech) return false;
             return true
         }).slice(page * rows, page * rows + rows)
     }, [data, page, rows, filter])
     const dataLength = useMemo(() => {
-        if(data == null) return 0
+        if (data == null) return 0
         console.log(data)
-       return data?.search?.filter((el : any) => {
-         if(filter.kelasKata != "all" && filter.kelasKata != el.part_of_speech) return false;
-        return true
-       }).length
+        return data?.search?.filter((el: any) => {
+            if (filter.kelasKata != "all" && filter.kelasKata != el.part_of_speech) return false;
+            return true
+        }).length
     }, [data, page, rows, filter])
     const [deleteWord] = useMutation(gql`
         mutation RemoveWord($id: String!) {
@@ -100,6 +105,27 @@ export default function Words() {
           _id
         }
       }
+    `)
+
+    const [addWord] = useMutation(gql`
+    mutation CreateWord($input: CreateWordInput!) {
+        createWord(createWordInput: $input) {
+          _id
+          lexem
+          definition
+          example
+          example_gloss
+          sense_number
+          homonym_number
+          sub_entry
+          phonetic_form
+          part_of_speech
+          related_words_id
+          
+        }
+      }
+        
+              
     `)
     const [inputData, setInputData] = useState(null)
     const [open, setOpen] = useState(false)
@@ -110,7 +136,7 @@ export default function Words() {
             })
 
             if (!isConfirmed) return
-            Loading.fire()
+             Loading.fire()
             await deleteWord({
                 variables: {
                     id
@@ -120,10 +146,46 @@ export default function Words() {
             refetch()
         } catch (err) {
             console.error(err)
+
+            Swal.fire("Gagal", "", "error")
+
+
+        }
+    }
+
+    async function tambahData() {
+        try {
+            if(tempAddingItems.length == 0) return
+            Loading.fire()
+            for(let i = 0 ; i < tempAddingItems.length;i++) {
+                const {relatedWords, ...data} = tempAddingItems[i]
+                const parents = await addWord({
+                    variables : {
+                        input : data
+                    }
+                })
+                console.log(parents)
+                for(let j = 0; j < relatedWords.length; j++) {
+                    await addWord({
+                        variables : {
+                            input : {
+                                related_words_id : parents.data.createWord._id,
+                                ...relatedWords[i]
+                            }
+                        }
+                    })
+                }
+            
+            }
+            Swal.fire("Berhasil", "", "success")
+            setTempAdding([])
+            refetch()
+        }catch(err) {
+            console.error(err)
             Swal.fire("Gagal", "", "error")
         }
     }
-    
+
     if (error) return <Box >
         <Grid container minHeight={"50vh"} justifyContent={"center"} alignItems={"center"} direction={"column"}>
             <Grid item>
@@ -149,40 +211,50 @@ export default function Words() {
                 </Typography>
                 <Grid container sx={{ marginTop: "1.5rem", marginX: "1rem" }}>
                     <Grid item xs={4}>
-                    <Select
-                        value={filter.kelasKata}
-                        size="small"
-                        fullWidth
-                        variant="outlined"
-                        sx={{
-                            '& .MuiSelect-select': {
-                              color: 'grey', // Set your desired color here
-                            },
-                            '&.MuiOutlinedInput-root': { 
-                                '&:hover .MuiOutlinedInput-notchedOutline': 
-                                { borderColor: '#4942E4' }, 
-                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': 
-                                { borderColor: '#4942E4' } }
-                          }}
-                        onChange={(ev) => {
-                            setFilter(el => ({...el, kelasKata : ev.target.value as Filter["kelasKata"]}) )
-                            setRows(10)
-                            setPage(0)
-                        }
-                        }
+                        <Select
+                            value={filter.kelasKata}
+                            size="small"
+                            fullWidth
+                            variant="outlined"
+                            sx={{
+                                '& .MuiSelect-select': {
+                                    color: 'grey', // Set your desired color here
+                                },
+                                '&.MuiOutlinedInput-root': {
+                                    '&:hover .MuiOutlinedInput-notchedOutline':
+                                        { borderColor: '#4942E4' },
+                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline':
+                                        { borderColor: '#4942E4' }
+                                }
+                            }}
+                            onChange={(ev) => {
+                                setFilter(el => ({ ...el, kelasKata: ev.target.value as Filter["kelasKata"] }))
+                                setRows(10)
+                                setPage(0)
+                            }
+                            }
 
-                    >
-                        <StyledMenu value={"all"}>Pilih Kelas Kata</StyledMenu>
-                        <StyledMenu value={"n"}>Kata Benda</StyledMenu>
-                        <StyledMenu value={"v"}>Kata Kerja</StyledMenu>
-                    </Select>
+                        >
+                            <StyledMenu value={"all"}>Pilih Kelas Kata</StyledMenu>
+                            <StyledMenu value={"n"}>Kata Benda</StyledMenu>
+                            <StyledMenu value={"v"}>Kata Kerja</StyledMenu>
+                        </Select>
                     </Grid>
 
                 </Grid>
                 <Divider sx={{ marginTop: "1.5rem" }} />
                 <Grid container direction={"row-reverse"} spacing={2} alignItems={"center"} paddingRight={"1rem"} marginY="1rem" >
                     <Grid item>
-                        <AddWord refetch={refetch} />
+                        <CustomActionButton variant="contained" onClick={() => {
+                            if(!isAdding) {
+                                setIsAdding(true)
+                                return
+                            }
+                            console.log(tempAddingItems)
+                            tambahData()
+                        }}  >
+                            Tambah
+                        </CustomActionButton>
                     </Grid>
                     <Grid item>
                         <TextField hiddenLabel value={search} onChange={(ev) => {
@@ -192,93 +264,147 @@ export default function Words() {
                 </Grid>
                 <Divider />
                 {
+                    isAdding && <>
+
+                        <Grid container spacing={2} sx={{ marginX: 2, marginY: 2, width : "100%" }}>
+                            {
+                                tempAddingItems.map((el, ind) =>
+                                    <Grid item sx={{width : "80%"}}>
+                                        <AddWordItem hapus={() => {
+                                            setTempAdding(el => {
+                                                const temp : any = structuredClone(el)
+                                                
+
+                                                return temp.filter((el: any, ind2 : number) => ind != ind2 )
+                                            })
+                                        }} onChange={(keys : string, val : any) => {
+                                            setTempAdding(el => {
+                                                const temp : any = structuredClone(el)
+                                                temp[ind][keys] = val
+
+                                                return temp
+                                            })
+                                        }} ind={ind} item={el} />
+                                    </Grid>
+                                )
+                            }
+
+                        </Grid>
+                        <CustomActionButton variant="contained" sx={{ marginX: 2, marginBottom  : 2 }} onClick={() => {
+                            setTempAdding(el => {
+                                const temp = structuredClone(el)
+                                temp.push({
+                                    definition: [],
+                                    example: [],
+                                    example_gloss: [],
+                                    homonym_number: 0,
+                                    lexem: "",
+                                    part_of_speech: "n",
+                                    phonetic_form: "",
+                                    sense_number: 0,
+                                    relatedWords : []
+                                })
+
+                                console.log(temp)
+
+
+
+                                return temp
+                            })
+                        }}  >
+                            Tambah Kata
+                        </CustomActionButton>
+                        <Divider />
+                    </>
+                }
+                {
                     !loading && <div style={{ overflowX: "auto" }}>
 
-                    <Table sx={{ overflowX: "auto" }}>
-                        <TableHead sx={{
-                            backgroundColor: '#e0e0e0'
-                        }}>
-                            <TableRow>
-                                <RowCell>
-                                    No
-                                </RowCell>
-                                <RowCell>
-                                    Kata
-                                </RowCell>
-                                <RowCell>
-                                    Definisi
-                                </RowCell>
-                                <RowCell>
-                                    Pelafalan
-                                </RowCell>
-                                <RowCell>
-                                    Contoh
-                                </RowCell>
-                                <RowCell>
-                                    Sub Lema
-                                </RowCell>
-                                <RowCell>
-                                    Nomor Homonim
-                                </RowCell>
-                                <RowCell>
-                                    Nomor Polisemi
-                                </RowCell>
-                                <RowCell>
-                                    Kelas Kata
-                                </RowCell>
-                                <RowCell>
-                                    Aksi
-                                </RowCell>
+                        <Table sx={{ overflowX: "auto" }}>
+                            <TableHead sx={{
+                                backgroundColor: '#e0e0e0'
+                            }}>
+                                <TableRow>
+                                    <RowCell>
+                                        No
+                                    </RowCell>
+                                    <RowCell>
+                                        Kata
+                                    </RowCell>
+                                    <RowCell>
+                                        Definisi
+                                    </RowCell>
+                                    <RowCell>
+                                        Pelafalan
+                                    </RowCell>
+                                    <RowCell>
+                                        Contoh
+                                    </RowCell>
+                                    <RowCell>
+                                        Sub Lema
+                                    </RowCell>
+                                    <RowCell>
+                                        Nomor Homonim
+                                    </RowCell>
+                                    <RowCell>
+                                        Nomor Polisemi
+                                    </RowCell>
+                                    <RowCell>
+                                        Kelas Kata
+                                    </RowCell>
+                                    <RowCell>
+                                        Aksi
+                                    </RowCell>
 
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {
-                                dataShow.map((el: any, ind: number) => (
-                                    <TableRow>
-                                        <TableCell>
-                                            {(page * rows) + (ind + 1)}
-                                        </TableCell>
-                                        <TableCell>
-                                            {el.lexem}
-                                        </TableCell>
-                                        <TableCell>
-                                            {el.definition.join(',')}
-                                        </TableCell>
-                                        <TableCell>
-                                            {el.phonetic_form}
-                                        </TableCell>
-                                        <TableCell>
-                                            {el.example.map((el2: string, ind: string) => el2 + " : " + el.example_gloss[ind]) + (ind < (el.example.length - 1) ? "," : "")}
-                                        </TableCell>
-                                        <TableCell>
-                                            {el.sub_entry}
-                                        </TableCell>
-                                        <TableCell>
-                                            {el.homonym_number}
-                                        </TableCell>
-                                        <TableCell>
-                                            {el.sense_number}
-                                        </TableCell>
-                                        <TableCell>
-                                            {KelasKata[el.part_of_speech]}
-                                        </TableCell>
-                                        <TableCell >
-                                            <ActionButton hapus={() => {
-                                                removeWord(el._id)
-                                            }} edit={() => {
-                                                setOpen(true)
-                                                setInputData(el)
-                                            }} />
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            }
-                        </TableBody>
-                    </Table>
-                </div>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    dataShow.map((el: any, ind: number) => (
+                                        <TableRow>
+                                            <TableCell>
+                                                {(page * rows) + (ind + 1)}
+                                            </TableCell>
+                                            <TableCell>
+                                                {el.lexem || el.sub_entry}
+                                            </TableCell>
+                                            <TableCell>
+                                                {el.definition.join(',')}
+                                            </TableCell>
+                                            <TableCell>
+                                                {el.phonetic_form}
+                                            </TableCell>
+                                            <TableCell>
+                                                {el.example.map((el2: string, ind: string) => el2 + " : " + el.example_gloss[ind]) + (ind < (el.example.length - 1) ? "," : "")}
+                                            </TableCell>
+                                            <TableCell>
+                                                {el.sub_entry}
+                                            </TableCell>
+                                            <TableCell>
+                                                {el.homonym_number}
+                                            </TableCell>
+                                            <TableCell>
+                                                {el.sense_number}
+                                            </TableCell>
+                                            <TableCell>
+                                                {KelasKata[el.part_of_speech]}
+                                            </TableCell>
+                                            <TableCell >
+                                                <ActionButton hapus={() => {
+                                                    removeWord(el._id)
+                                                }} edit={() => {
+                                                    setOpen(true)
+                                                    setInputData(el)
+                                                }} />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                }
+                            </TableBody>
+                        </Table>
+                    </div>
                 }
-                
+
 
                 <TablePagination
                     component="div"

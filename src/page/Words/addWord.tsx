@@ -24,7 +24,7 @@ type Inputs = {
 
 const header = [
     "Kata", "Definisi", "Contoh(Bahasa asal)", "Contoh(Bahasa Indonesia)", "Nomor Polisemi", "Nomor Homonim", "Entri Sub", "Lafal",
-    "Kelas Kata", "Relasi Kata(id)"
+    "Kelas Kata"
 ]
 
 const keys = [
@@ -37,7 +37,6 @@ const keys = [
     "sub_entry",
     "phonetic_form",
     "part_of_speech",
-    "related_words_id"
 ]
 
 type keysType = "lexem" |
@@ -91,7 +90,7 @@ export default function AddWord({ refetch }: { refetch: any }) {
           sub_entry
           phonetic_form
           part_of_speech
-          related_words_id
+          
         }
       }
         

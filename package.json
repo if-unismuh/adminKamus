@@ -20,13 +20,14 @@
     "graphql": "^16.7.1",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
+    "mui-chips-input": "^2.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.1",
     "react-icons": "^4.10.1",
     "react-router-dom": "^6.9.0",
-    "sort-by": "^1.2.0",
-    "sweetalert2": "^11.7.12",
+    "sort-by": "^0.0.2",
+    "sweetalert2": "^11.6.13",
     "zod": "^3.21.4"
   },
   "devDependencies": {
