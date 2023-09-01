@@ -1,6 +1,7 @@
 import { Grid, Card, CardContent, Typography, List, ListItem, ListItemText, createTheme, ThemeProvider } from "@mui/material"
 import SearchingWords from "./JumlahCount"
 import WordCount from "./jumlahWords"
+import JumlahUser from "./JumlahUser"
 
 const theme = createTheme(
     {
@@ -24,6 +25,9 @@ export default function Dashboard() {
                         </Grid>
                         <Grid item xs={2}>
                             <WordCount/>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <JumlahUser  />
                         </Grid>
                     </Grid>
                 </Grid>

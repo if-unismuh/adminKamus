@@ -31,50 +31,62 @@ export default function Login() {
   }
 
   return (
-    <Grid container >
-      <Grid item xs={7}  >
-        <Box sx={{ height: "99vh", objectFit: "contain" }}>
-          <img src="/login.jpg" width={"100%"} height={"100%"} alt="Login" />
+    <Grid container sx={{backgroundColor :"#DAD6D6"}}>
+      <Grid item xs={5}  >
+        <Box sx={{ height: "99vh", objectFit: "contain",  }}>
+          <Typography variant="h3" sx={{
+            textAlign: "center",
+            paddingY : 4
+
+
+
+          }}>
+            Selamat Datang Bugisi
+          </Typography>
+          <Box sx={{ display: "grid", placeItems: "center",  }}>
+            <img src="/background.png" width={"70%"} height={"70%"} style={{ alignSelf: "center" }} alt="Login" />
+          </Box>
         </Box>
       </Grid>
-      <Grid item xs={5}>
-        <Box sx={{ height: "100vh" }} component={"form"} onSubmit={handleSubmit(login)} marginX={"3rem"}>
+      <Grid item xs={7} sx={{ backgroundColor :"white", borderTopLeftRadius : "5%", borderBottomLeftRadius : "5%" }} >
+        <Box sx={{ height:"105vh",}} component={"form"} onSubmit={handleSubmit(login)} marginX={"3rem"}>
           <Grid container direction={"column"} spacing={4}>
             <Grid item xs={12}>
-              <Typography variant="h4" fontFamily={"'Merriweather', serif"} sx={{
+              <Typography variant="h3" fontFamily={"'Merriweather', serif"} sx={{
                 marginTop: "5rem",
               }}>
-                Selamat Datang di Admin Kamus Bahasa Bugis
+                Masuk di Bugisi
               </Typography>
             </Grid>
-            <Grid item>
-              <FormControl variant="standard" sx={{ width: "100%" }}>
+            <Grid item sx={{display : "flex",justifyContent:"center"}}>
+              <FormControl variant="standard" sx={{ width: "90%" }}>
                 <InputLabel shrink htmlFor="username-id" sx={{ fontWeight: "bold" }}>
                   Username
                 </InputLabel>
-                <BootstrapInput size="small" id="username-id" fullWidth {...register("username")} error={!!errors.username} helperText={errors.username?.message || ""}  />
-               
+                <BootstrapInput size="small" id="username-id" fullWidth {...register("username")} error={!!errors.username} helperText={errors.username?.message || ""} />
+
               </FormControl>
             </Grid>
-            <Grid item>
-              <FormControl variant="standard" sx={{ width: "100%" }}>
+            <Grid item sx={{display :"flex", justifyContent :"center"}}>
+              <FormControl variant="standard" sx={{ width: "90%" }}>
                 <InputLabel shrink htmlFor="password-id" sx={{ fontWeight: "bold" }}>
                   Password
                 </InputLabel>
                 <BootstrapInput type="password" size="small" id="password-id" fullWidth {...register("password")} error={!!errors.password} helperText={errors.password?.message || ""} />
-                
+
               </FormControl>
             </Grid>
-            <Grid item marginTop={"2rem"}>
+            <Grid item sx={{display :"flex", justifyContent:"center", marginTop : 10}}>
               <Button type="submit" variant="contained" sx={{
-                [`&.${buttonClasses.contained}`] : {
-                  backgroundColor : "#068FFF",
-                  [`&:hover`] : {
-                    backgroundColor : "#4E4FEB"
+                [`&.${buttonClasses.contained}`]: {
+                  backgroundColor: "#068FFF",
+                  [`&:hover`]: {
+                    backgroundColor: "#4E4FEB"
                   },
-                  fontFamily : "'Poppins', sans-serif"
-                }
-              }} fullWidth >
+                  fontFamily: "'Poppins', sans-serif"
+                },
+                width :"80%"
+              }} >
                 Login
               </Button>
             </Grid>

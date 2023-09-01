@@ -9,24 +9,26 @@ import { z } from "zod";
 
 const header = [
     "Kata",
-    "Definisi", 
-    "Contoh(Bahasa asal)", 
-    "Contoh(Bahasa Indonesia)", 
     "Nomor Polisemi", 
     "Nomor Homonim", 
     "Lafal",
-    "Kelas Kata"
+    "Kelas Kata",
+    "Definisi", 
+    "Contoh(Bahasa asal)", 
+    "Contoh(Bahasa Indonesia)", 
+    
 ]
 
 const keys = [
     "lexem",
-    "definition",
-    "example",
-    "example_gloss",
     "sense_number",
     "homonym_number",
     "phonetic_form",
     "part_of_speech",
+    "definition",
+    "example",
+    "example_gloss",
+    
 ]
 
 type keysType = "lexem" |
@@ -39,21 +41,27 @@ type keysType = "lexem" |
     "part_of_speech"
 
 
-const HeaderSubEntry = ["Sub Entri", "Definisi", 
-"Contoh(Bahasa asal)", 
-"Contoh(Bahasa Indonesia)", 
-"Nomor Polisemi", 
+const HeaderSubEntry = [
+    "Sub Entri", 
+    "Nomor Polisemi", 
 "Nomor Homonim", 
 "Lafal",
-"Kelas Kata"
+"Kelas Kata",
+"Definisi", 
+"Contoh(Bahasa asal)", 
+"Contoh(Bahasa Indonesia)", 
+
 ]
-const KeysSubEntry = ["sub_entry", "definition",
-"example",
-"example_gloss",
+const KeysSubEntry = ["sub_entry", 
 "sense_number",
 "homonym_number",
 "phonetic_form",
-"part_of_speech",]
+"part_of_speech",
+"definition",
+"example",
+"example_gloss",
+
+]
 
 export default function AddWordItem({ ind, item, onChange, hapus }: { ind: number, item: any, onChange: any, hapus : any }) {
     const { control, register, setValue, formState: { errors }, handleSubmit, reset, setError } = useForm<IWords>({
@@ -63,12 +71,6 @@ export default function AddWordItem({ ind, item, onChange, hapus }: { ind: numbe
             ...item,
         }
     })
-
-
-
-
-
-
 
     return (
         <>
