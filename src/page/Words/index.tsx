@@ -86,6 +86,7 @@ export default function Words() {
 
         if (data?.search == null) return []
         if (data?.search.length == 0) return []
+
         return data.search.filter((el: any) => {
             if (filter.kelasKata != "all" && filter.kelasKata != el.part_of_speech) return false;
             return true
