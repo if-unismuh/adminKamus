@@ -39,7 +39,8 @@ export const useWord = () => useContext(InputProvider)
 
 const KelasKata: { [key: string]: string } = {
     "n": "Benda",
-    "v": "Kerja"
+    "v": "Kerja",
+    "adv": "Kata Keterangan",
 }
 
 interface Filter {
@@ -172,7 +173,7 @@ export default function Words() {
                         variables : {
                             input : {
                                 related_words_id : parents.data.createWord._id,
-                                ...relatedWords[i]
+                                ...relatedWords[j]
                             }
                         }
                     })

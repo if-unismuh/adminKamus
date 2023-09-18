@@ -117,6 +117,7 @@ export default function AddWordItem({ ind, item, onChange, hapus }: { ind: numbe
                                                         >
                                                             <MenuItem value={"n"}>Benda</MenuItem>
                                                             <MenuItem value={"v"}>Kerja</MenuItem>
+                                                            <MenuItem value={"adv"}>Kata Keterangan</MenuItem>
                                                         </Select>
                                                     </FormControl>
 
