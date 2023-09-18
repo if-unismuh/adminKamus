@@ -156,6 +156,7 @@ export default function Words() {
 
     async function tambahData() {
         try {
+            console.log(tempAddingItems)
             if(tempAddingItems.length == 0) return
             Loading.fire()
             for(let i = 0 ; i < tempAddingItems.length;i++) {
@@ -313,7 +314,7 @@ export default function Words() {
                                 return temp
                             })
                         }}  >
-                            Tambah Kata
+                            Tambah Lema
                         </CustomActionButton>
                         <Divider />
                     </>
@@ -330,7 +331,7 @@ export default function Words() {
                                         No
                                     </RowCell>
                                     <RowCell>
-                                        Kata
+                                        Lema
                                     </RowCell>
                                     <RowCell>
                                         Definisi
@@ -367,7 +368,7 @@ export default function Words() {
                                                 {(page * rows) + (ind + 1)}
                                             </TableCell>
                                             <TableCell>
-                                                {el.lexem || el.sub_entry}
+                                                {el.lexem}
                                             </TableCell>
                                             <TableCell>
                                                 {el.definition.join(',')}

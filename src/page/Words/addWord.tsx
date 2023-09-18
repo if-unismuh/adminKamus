@@ -23,7 +23,7 @@ type Inputs = {
 }
 
 const header = [
-    "Kata", "Definisi", "Contoh(Bahasa asal)", "Contoh(Bahasa Indonesia)", "Nomor Polisemi", "Nomor Homonim", "Entri Sub", "Lafal",
+    "Lema", "Definisi", "Contoh(Bahasa asal)", "Contoh(Bahasa Indonesia)", "Nomor Polisemi", "Nomor Homonim", "Entri Sub", "Lafal",
     "Kelas Kata"
 ]
 
@@ -160,7 +160,7 @@ export default function AddWord({ refetch }: { refetch: any }) {
                     <Grid container direction={"column"} spacing={3} >
                         <Grid item>
                             <Typography variant="h5" fontFamily={"'Poppins', sans-serif"}>
-                                Input Kata
+                                Input Lema
                             </Typography>
                         </Grid>
 

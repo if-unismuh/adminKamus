@@ -8,7 +8,7 @@ import { useState } from "react";
 import { z } from "zod";
 
 const header = [
-    "Kata",
+    "Lema",
     "Nomor Polisemi", 
     "Nomor Homonim", 
     "Lafal",
