@@ -6,6 +6,7 @@ import { MuiChipsInput } from "mui-chips-input";
 import { CustomActionButton } from "../../component/buttons";
 import { useState } from "react";
 import { z } from "zod";
+import { KelasKata } from ".";
 
 const header = [
     "Lema",
@@ -115,9 +116,12 @@ export default function AddWordItem({ ind, item, onChange, hapus }: { ind: numbe
                                                                 onChange(keys[ind], ev.target.value)
                                                             }}
                                                         >
-                                                            <MenuItem value={"n"}>Benda</MenuItem>
-                                                            <MenuItem value={"v"}>Kerja</MenuItem>
+                                                            <MenuItem value={"u"}>Belum Diketahui</MenuItem>
+                                                            <MenuItem value={"n"}>Kata Benda</MenuItem>
+                                                            <MenuItem value={"v"}>Kata Kerja</MenuItem>
                                                             <MenuItem value={"adv"}>Kata Keterangan</MenuItem>
+                                                            <MenuItem value={"adj"}>Kata Sifat</MenuItem>
+                                                            <MenuItem value={"pron"}>Kata Ganti</MenuItem>
                                                         </Select>
                                                     </FormControl>
 
@@ -215,8 +219,12 @@ function AddWordItemSub({ ind, item, onChange, hapus }: { ind: number, item: any
                                                             onChange(KeysSubEntry[ind], ev.target.value)
                                                         }}
                                                     >
-                                                        <MenuItem value={"n"}>Benda</MenuItem>
-                                                        <MenuItem value={"v"}>Kerja</MenuItem>
+                                                         <MenuItem value={"u"}>Belum Diketahui</MenuItem>
+                                                         {
+                                                            Object.keys(KelasKata).map(el => <MenuItem value={el}>{KelasKata[el as typeof keyof KelasKata]}</MenuItem>)
+                                                         }
+                                                            
+                                                           
                                                     </Select>
                                                 </FormControl>
 

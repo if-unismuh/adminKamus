@@ -37,23 +37,25 @@ const InputProvider = createContext<InputType>({
 
 export const useWord = () => useContext(InputProvider)
 
-const KelasKata: { [key: string]: string } = {
+export const KelasKata = {
     "n": "Benda",
     "v": "Kerja",
-    "adv": "Kata Keterangan",
-}
+    "adv": "Keterangan",
+    "adj": "Sifat",
+    "pron": "Ganti",
+    "pr" : "Depan",
+    "num" : "Angka"                                                                
+} as const
 
-interface Filter {
-    kelasKata: "n" | "v" | "all",
-
-}
-
+type kelasKata = keyof typeof KelasKata | "all"
 
 export default function Words() {
     document.title = "words"
     const [page, setPage] = useState(0)
     const [rows, setRows] = useState(10)
-    const [filter, setFilter] = useState<Filter>({
+    const [filter, setFilter] = useState<{
+        kelasKata : kelasKata
+    }>({
         kelasKata: "all"
     })
 
@@ -231,7 +233,7 @@ export default function Words() {
                                 }
                             }}
                             onChange={(ev) => {
-                                setFilter(el => ({ ...el, kelasKata: ev.target.value as Filter["kelasKata"] }))
+                                setFilter(el => ({ ...el, kelasKata: ev.target.value as kelasKata }))
                                 setRows(10)
                                 setPage(0)
                             }
@@ -239,8 +241,9 @@ export default function Words() {
 
                         >
                             <StyledMenu value={"all"}>Pilih Kelas Kata</StyledMenu>
-                            <StyledMenu value={"n"}>Kata Benda</StyledMenu>
-                            <StyledMenu value={"v"}>Kata Kerja</StyledMenu>
+                            {
+                                Object.keys(KelasKata).map( (el : any ) => <StyledMenu value={el}>{KelasKata[el as typeof keyof KelasKata]}</StyledMenu>)
+                            }
                         </Select>
                     </Grid>
 
@@ -390,7 +393,7 @@ export default function Words() {
                                                 {el.sense_number}
                                             </TableCell>
                                             <TableCell>
-                                                {KelasKata[el.part_of_speech]}
+                                                {KelasKata[el.part_of_speech as keyof typeof KelasKata ]}
                                             </TableCell>
                                             <TableCell >
                                                 <ActionButton hapus={() => {
