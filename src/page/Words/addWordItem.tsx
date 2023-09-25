@@ -89,7 +89,7 @@ export default function AddWordItem({ ind, item, onChange, hapus }: { ind: numbe
                 <Grid container rowSpacing={2} spacing={1}>
                     {
                         header.map((el, ind) => (
-                            <Grid item key={el} xs={4} >
+                            <Grid item key={el} xl={4} md={6} xs={12} >
                                 {
                                     ["definition", "example_gloss", "example"].includes(keys[ind]) ?
 
@@ -195,7 +195,7 @@ function AddWordItemSub({ ind, item, onChange, hapus }: { ind: number, item: any
             <Grid container rowSpacing={2}>
                 {
                     HeaderSubEntry.map((el, ind) => (
-                        <Grid item key={el} xs={4} >
+                        <Grid item key={el} xl={4} md={6} xs={12}  >
                             {
                                 ["definition", "example_gloss", "example"].includes(KeysSubEntry[ind]) ?
                                     <MuiChipsInput fullWidth value={item[KeysSubEntry[ind]]} onChange={(ev) => {
