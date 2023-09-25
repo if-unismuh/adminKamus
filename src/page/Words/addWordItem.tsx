@@ -117,11 +117,9 @@ export default function AddWordItem({ ind, item, onChange, hapus }: { ind: numbe
                                                             }}
                                                         >
                                                             <MenuItem value={"u"}>Belum Diketahui</MenuItem>
-                                                            <MenuItem value={"n"}>Kata Benda</MenuItem>
-                                                            <MenuItem value={"v"}>Kata Kerja</MenuItem>
-                                                            <MenuItem value={"adv"}>Kata Keterangan</MenuItem>
-                                                            <MenuItem value={"adj"}>Kata Sifat</MenuItem>
-                                                            <MenuItem value={"pron"}>Kata Ganti</MenuItem>
+                                                            {
+                                                            Object.keys(KelasKata).map(el => <MenuItem value={el}>{KelasKata[el as keyof typeof KelasKata]}</MenuItem>)
+                                                         }
                                                         </Select>
                                                     </FormControl>
 
