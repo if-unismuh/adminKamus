@@ -221,7 +221,7 @@ function AddWordItemSub({ ind, item, onChange, hapus }: { ind: number, item: any
                                                     >
                                                          <MenuItem value={"u"}>Belum Diketahui</MenuItem>
                                                          {
-                                                            Object.keys(KelasKata).map(el => <MenuItem value={el}>{KelasKata[el as typeof keyof KelasKata]}</MenuItem>)
+                                                            Object.keys(KelasKata).map(el => <MenuItem value={el}>{KelasKata[el as keyof typeof KelasKata]}</MenuItem>)
                                                          }
                                                             
                                                            

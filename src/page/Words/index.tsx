@@ -242,7 +242,7 @@ export default function Words() {
                         >
                             <StyledMenu value={"all"}>Pilih Kelas Kata</StyledMenu>
                             {
-                                Object.keys(KelasKata).map( (el : any ) => <StyledMenu value={el}>{KelasKata[el as typeof keyof KelasKata]}</StyledMenu>)
+                                Object.keys(KelasKata).map( (el : any ) => <StyledMenu value={el}>{KelasKata[el as keyof typeof KelasKata]}</StyledMenu>)
                             }
                         </Select>
                     </Grid>
